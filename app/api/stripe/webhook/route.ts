@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { headers } from "next/headers";
-import { stripe } from "@/lib/stripe";
-import { supabaseAdmin } from "@/lib/supabase";
+import { getStripe } from "@/lib/stripe";
+import { getSupabaseAdmin } from "@/lib/supabase";
 import Stripe from "stripe";
 
 export async function POST(req: NextRequest) {
@@ -25,6 +25,7 @@ export async function POST(req: NextRequest) {
 
   try {
     // Stripe署名検証
+    const stripe = getStripe();
     event = stripe.webhooks.constructEvent(
       body,
       signature,
@@ -46,6 +47,7 @@ export async function POST(req: NextRequest) {
 
     try {
       // Supabaseに注文保存
+      const supabaseAdmin = getSupabaseAdmin();
       const { data, error } = await supabaseAdmin.from("orders").insert({
         stripe_payment_intent_id: paymentIntent.id,
         status: "succeeded",

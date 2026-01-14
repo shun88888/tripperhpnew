@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { stripe } from "@/lib/stripe";
+import { getStripe } from "@/lib/stripe";
 
 export async function POST(req: NextRequest) {
   try {
@@ -15,6 +15,7 @@ export async function POST(req: NextRequest) {
     }
 
     // PaymentIntent作成
+    const stripe = getStripe();
     const paymentIntent = await stripe.paymentIntents.create({
       amount: 2980, // 2,980円
       currency: "jpy",
